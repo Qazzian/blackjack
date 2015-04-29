@@ -8,10 +8,53 @@
 </head>
 <body>
 
+<h1>Blackjack</h1>
+
+
+<section id="playerBanker">
+    <div>
+        <span class="playerName">{{name}}</span>
+    </div>
+    <ul class="playerHand">
+        <li>
+            {{value}} of {{suit}}
+        </li>
+    </ul>
+    <div>
+        (<span class="handValue">{{value}}</span>)
+        <span class="playerState">{{state}}</span>
+    </div>
+
+</section>
+
+
+
+
+<section id="player1">
+    <div>
+        <span class="playerName">{{name}}</span>
+    </div>
+    <ul class="playerHand">
+        <li>
+            {{value}} of {{suit}}
+        </li>
+    </ul>
+    <div>
+        (<span class="handValue">{{value}}</span>)
+        <span class="playerState">{{state}}</span>
+    </div>
+    <div class="interface">
+        <button class="hitButton" value="hit">Hit</button>
+        <button class="stickButton" value="stick">Stick</button>
+    </div>
+</section>
+
+<p>Refresh to play again</p>
 
 <script src="js/vendor/lodash.js"></script>
 <script src="js/vendor/jquery.js"></script>
 <script src="js/vendor/seedrandom.js"></script>
 <script src="js/cards.js"></script>
+<script src="js/tableView.js"></script>
 </body>
 </html>

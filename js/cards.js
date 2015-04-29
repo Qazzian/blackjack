@@ -62,7 +62,16 @@ Pack = function(){
 Card = function(suit, value) {
 	this.suit = suit;
 	this.value = value;
-}
+};
+
+
+PLAYER_STATES = {
+	IN_PLAY: 0,
+	STUCK: 1,
+	BUST: 2,
+	LOST: 3,
+	WON: 4
+};
 
 /**
  *
@@ -70,11 +79,10 @@ Card = function(suit, value) {
  * @constructor
  */
 Player = function(playerName){
-	var self = this;
 	this.name = playerName;
 	this.hand = [];
 	this.handValue = 0;
-	this.score = 0;
+	this.state = PLAYER_STATES.IN_PLAY; // @see PLAYER_STATES
 };
 
 /**
@@ -87,11 +95,19 @@ BlackJack = function(){
 	this.player = null;
 
 	var GOAL = 21;
+	var self = this;
 
 	this.init = function(){
 		this.deck = new Pack();
 		this.banker = new Player('Banker');
 		this.player = new Player('Player 1');
+
+		this.player.hand.push(this.deck.deal());
+		this.player.hand.push(this.deck.deal());
+		this.player.handValue = this.calcHandValue(this.player.hand);
+
+		this.banker.hand.push(this.deck.deal());
+		this.banker.handValue = this.calcHandValue(this.banker.hand);
 	};
 
 	/**
@@ -122,7 +138,7 @@ BlackJack = function(){
 			return handValue(hand.slice(1, hand.length), currVal + hand[0].value);
 		}
 
-	};
+	}
 
 	/**
 	 * Public interface for handValue.
@@ -137,16 +153,89 @@ BlackJack = function(){
 		return value > GOAL;
 	};
 
+	/**
+	 *
+	 * @param hand
+	 * @param value
+	 * @returns {boolean}
+	 */
 	this.isFiveCardTrick = function(hand, value){
 		value = value || handValue(hand);
 		return hand.length === 5 && !this.isBust(value);
 	};
 
-	this.init = function(){
-		this.player.hand.push(this.deck.deal());
-		this.player.hand.push(this.deck.deal());
-		this.banker.hand.push(this.deck.deal());
+	this.updatePlayerState = function(playerModel){
+		var value = playerModel.handValue = this.calcHandValue(playerModel.hand);
+		if (value > GOAL) {
+			playerModel.state = PLAYER_STATES.BUST;
+		}
 	};
+
+	this.updateGameState = function() {
+		if (self.player.state === PLAYER_STATES.IN_PLAY || self.banker.state === PLAYER_STATES.IN_PLAY) {
+			return;
+		}
+
+		if (self.player.state === PLAYER_STATES.BUST) {
+			self.banker.state = PLAYER_STATES.WON;
+		}
+		else if (self.banker.state === PLAYER_STATES.BUST) {
+			self.player.state = PLAYER_STATES.WON;
+		}
+		else if (self.player.handValue > self.banker.handValue) {
+			self.player.state = PLAYER_STATES.WON;
+			self.banker.state = PLAYER_STATES.LOST;
+		}
+		else {
+			self.banker.state = PLAYER_STATES.WON;
+			self.player.state = PLAYER_STATES.LOST;
+		}
+	};
+
+	this.dealTo = function(playerModel){
+		playerModel.hand.push(this.deck.deal());
+		this.updatePlayerState(playerModel);
+
+	};
+
+	this.playerSticks = function (playerModel) {
+		playerModel.state = PLAYER_STATES.STUCK;
+	};
+
+	this.runBanker = function(){
+		console.info('run banker');
+
+		if (this.banker.state !== PLAYER_STATES.IN_PLAY) {
+			console.info('banker not in play');
+			this.updateGameState();
+			return;
+		}
+		if (this.player.state === PLAYER_STATES.BUST) {
+			this.playerSticks(this.banker);
+		}
+		else if (this.banker.handValue < this.player.handValue) {
+			console.info('banker twists', this.banker.value, this.player.value);
+			this.dealTo(this.banker);
+		}
+		else {
+			this.playerSticks(this.banker);
+			console.info('banker sticks');
+		}
+
+		this.updateGameState();
+		$(document).trigger('blackjack:bankerUpdated');
+
+		if (this.banker.state === PLAYER_STATES.IN_PLAY) {
+			setTimeout(function(){
+				self.runBanker()
+			}, 1000);
+		}
+	};
+
+
+
+
+	this.init();
 
 };
 
