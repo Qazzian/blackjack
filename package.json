@@ -1,0 +1,17 @@
+{
+  "name": "BlackJack",
+  "version": "1.0.0",
+  "description": "Simple Blackjack example",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Qazzian <Qazzian@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "jquery": "^2.1.4",
+    "lodash": "^3.7.0",
+    "qunit": "^0.7.6",
+    "seedrandom": "^2.3.11"
+  }
+}
