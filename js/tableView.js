@@ -16,6 +16,12 @@ $(document).ready(function() {
 		'diamonds' : {color: 'red', symbol: '♦'},
 		'clubs' : {color: 'black', symbol: '♣'}
 	};
+	var VALUE_NAMES = {
+		1: 'A',
+		11: 'J',
+		12: 'Q',
+		13: 'K'
+	};
 
 	$('.hitButton').on('click', function(){
 		if ($(this).hasClass('disabled')) {
@@ -66,12 +72,13 @@ $(document).ready(function() {
 
 	var generateHandView = function (hand) {
 		var handDom = '',
-			suitColor, suitSymbol;
+			suitColor, suitSymbol, valueText;
 		_.each(hand, function (card) {
 			suitColor = SUIT_VIEWS[card.suit].color;
 			suitSymbol = SUIT_VIEWS[card.suit].symbol;
-			handDom += '<li class="card ' + suitColor + '"><span class="cardTop">' + card.value + suitSymbol + '</span>';
-			handDom += '<span class="cardBottom">' + card.value + suitSymbol + '</span></li>';
+			valueText = VALUE_NAMES[card.value] || card.value;
+			handDom += '<li class="card ' + suitColor + '"><span class="cardTop">' + valueText + suitSymbol + '</span>';
+			handDom += '<span class="cardBottom">' + valueText + suitSymbol + '</span></li>';
 		});
 
 		console.info('HAND DOM:', handDom);
