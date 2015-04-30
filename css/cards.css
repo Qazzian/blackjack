@@ -37,6 +37,11 @@ li.card.black {
 	color: black;
 }
 
+.cardBottom {
+	display: block;
+	transform: rotate(180deg) translateY(-30px);
+}
+
 .playerStats {
 	clear: both;
 	margin: 1ex 0;

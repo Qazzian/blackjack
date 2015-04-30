@@ -70,7 +70,8 @@ $(document).ready(function() {
 		_.each(hand, function (card) {
 			suitColor = SUIT_VIEWS[card.suit].color;
 			suitSymbol = SUIT_VIEWS[card.suit].symbol;
-			handDom += '<li class="card ' + suitColor + '">' + card.value + suitSymbol + '</li>';
+			handDom += '<li class="card ' + suitColor + '"><span class="cardTop">' + card.value + suitSymbol + '</span>';
+			handDom += '<span class="cardBottom">' + card.value + suitSymbol + '</span></li>';
 		});
 
 		console.info('HAND DOM:', handDom);
