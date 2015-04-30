@@ -10,6 +10,13 @@ $(document).ready(function() {
 	var playerView;
 	Math.seedrandom();
 
+	var SUIT_VIEWS = {
+		'spades' : {color: 'black', symbol: '♠'},
+		'hearts' : {color: 'red', symbol: '♥'},
+		'diamonds' : {color: 'red', symbol: '♦'},
+		'clubs' : {color: 'black', symbol: '♣'}
+	};
+
 	$('.hitButton').on('click', function(){
 		if ($(this).hasClass('disabled')) {
 			return;
@@ -58,9 +65,12 @@ $(document).ready(function() {
 	}
 
 	var generateHandView = function (hand) {
-		var handDom = '';
+		var handDom = '',
+			suitColor, suitSymbol;
 		_.each(hand, function (card) {
-			handDom += '<li class="card">' + card.value + ' of ' + card.suit + '</li>';
+			suitColor = SUIT_VIEWS[card.suit].color;
+			suitSymbol = SUIT_VIEWS[card.suit].symbol;
+			handDom += '<li class="card ' + suitColor + '">' + card.value + suitSymbol + '</li>';
 		});
 
 		console.info('HAND DOM:', handDom);
