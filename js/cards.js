@@ -26,13 +26,7 @@ Pack = function(){
 	};
 
 	this.shuffle = function(){
-		var copy = self.cards.splice(0, self.cards.length),
-			i;
-
-		for (i = copy.length; i > 0; i--) {
-			var pos = Math.randomInt(0, i-1);
-			self.cards.push(copy.splice(pos, 1)[0]);
-		}
+		self.cards = _.shuffle(self.cards);
 	};
 
 	/**
@@ -271,3 +265,5 @@ Math.randomInt = function (low, high, interval){
 	//log("Math.randomInt: low: "+low+", high: "+high+", interval: "+interval+", out: "+out);
 	return out;
 };
+
+

@@ -50,10 +50,14 @@
     <p>Refresh to play again</p>
 </div>
 
-<script src="js/vendor/lodash.js"></script>
-<script src="js/vendor/jquery.js"></script>
+<!-- Other libraries keep a reference to the native random implementation so include seedrandom first -->
 <script src="js/vendor/seedrandom.js"></script>
+
+<script src="js/vendor/jquery.js"></script>
+<script src="js/vendor/lodash.js"></script>
+
 <script src="js/cards.js"></script>
 <script src="js/tableView.js"></script>
+
 </body>
 </html>
