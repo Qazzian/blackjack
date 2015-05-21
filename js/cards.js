@@ -60,11 +60,11 @@ Card = function(suit, value) {
 
 
 PLAYER_STATES = {
-	IN_PLAY: 0,
-	STUCK: 1,
-	BUST: 2,
-	LOST: 3,
-	WON: 4
+	IN_PLAY: 'IN_PLAY',
+	STUCK: 'STUCK',
+	BUST: 'BUST',
+	LOST: 'LOST',
+	WON: 'WON'
 };
 
 /**
@@ -72,7 +72,8 @@ PLAYER_STATES = {
  * @param playerName {String} - to identify the player
  * @constructor
  */
-Player = function(playerName){
+Player = function(id, playerName){
+	this.id = id;
 	this.name = playerName;
 	this.hand = [];
 	this.handValue = 0;

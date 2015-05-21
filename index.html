@@ -12,43 +12,48 @@
 
 <div class="playingTable">
 
+    <div id="bankerPosition"></div>
 
-    <section id="playerBanker">
-        <h2 class="playerName">{{name}}</h2>
-        <ul class="playerHand">
-            <li>
-                {{value}} of {{suit}}
-            </li>
-        </ul>
-        <div class="playerStats">
-            (<span class="handValue">{{value}}</span>)
-            <span class="playerState">{{state}}</span>
-        </div>
-
-    </section>
-
-
-
-
-    <section id="player1">
-        <h2 class="playerName">{{name}}</h2>
-        <ul class="playerHand">
-            <li>
-                {{value}} of {{suit}}
-            </li>
-        </ul>
-        <div class="playerStats">
-            (<span class="handValue">{{value}}</span>)
-            <span class="playerState">{{state}}</span>
-        </div>
-        <div class="interface">
-            <button class="hitButton" value="hit">Hit</button>
-            <button class="stickButton" value="stick">Stick</button>
-        </div>
-    </section>
+    <ul id="playerList">
+        <li></li>
+    </ul>
 
     <p>Refresh to play again</p>
+
 </div>
+
+
+
+
+
+
+<script id="playerTemplate" type="text/x-handlebars-template">
+    <section class="playerSection" id="{{id}}">
+        <h2 class="playerName">{{name}}</h2>
+        {{#hand.length}}
+        <ul class="playerHand">
+            {{#hand}}
+            <li class="card {{suitColor}}">
+                <span class="cardTop">{{valueText}}{{suitSymbol}}</span>
+                <span class="cardBottom">{{valueText}}{{suitSymbol}}</span>
+            </li>
+            {{/hand}}
+        </ul>
+        {{/hand.length}}
+        {{^hand.length}}
+            <p>No cards</p>
+        {{/hand.length}}
+        <div class="playerStats">
+            (<span class="handValue">{{handValue}}</span>)
+            <span class="playerState">{{stateText}}</span>
+        </div>
+        <div class="playerInterface">
+            <button class="hitButton" value="hit" data-player-id="{{id}}">Hit</button>
+            <button class="stickButton" value="stick" data-player-id="{{id}}">Stick</button>
+        </div>
+
+    </section>
+</script>
 
 <!-- Other libraries keep a reference to the native random implementation so include seedrandom first -->
 <script src="js/vendor/seedrandom.js"></script>

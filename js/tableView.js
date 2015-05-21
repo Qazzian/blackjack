@@ -7,7 +7,7 @@ $(document).ready(function() {
 
 	var bj;
 	var bankerView;
-	var playerView;
+	var playerViews = [];
 	Math.seedrandom();
 
 	var SUIT_VIEWS = {
@@ -21,6 +21,15 @@ $(document).ready(function() {
 		11: 'J',
 		12: 'Q',
 		13: 'K'
+	};
+
+
+	var PLAYER_STATE_TEXTS = {
+		IN_PLAY: '',
+		STUCK: '',
+		BUST: 'BUST!',
+		LOST: 'You Lose',
+		WON: 'You Win'
 	};
 
 	$('.hitButton').on('click', function(){
@@ -44,7 +53,7 @@ $(document).ready(function() {
 	});
 
 	$(document).on('blackjack:disablePlayer', function(){
-		$('.interface button').addClass('disabled').attr('disabled', true);
+		$('.playerInterface button').addClass('disabled').attr('disabled', true);
 	});
 
 	$(document).on('blackjack:playbanker', function(){
@@ -57,57 +66,45 @@ $(document).ready(function() {
 
 	function initTableView(){
 		bj = new BlackJack();
-		bankerView = new PlayerView(bj.banker, 'playerBanker');
-		playerView = new PlayerView(bj.player, 'player1');
 
-		console.info('GAME VIEW:', bj, bankerView, playerView);
+		var playerTemplate = $('#playerTemplate').html().trim().replace(/\s{2,}/g, ' ');
+		Mustache.parse(playerTemplate);
+
+		bankerView = new PlayerView(bj.banker, playerTemplate, $('#bankerPosition'));
+		playerViews.push(new PlayerView(bj.player, playerTemplate, $('#playerList li')));
+
+		console.info('GAME VIEW:', bj, bankerView, playerViews);
 
 		updateTableView();
 	}
 
 	function updateTableView(){
 		bankerView.update();
-		playerView.update();
+		_.each(playerViews, function(pv){
+			pv.update();
+		});
 	}
 
-	var generateHandView = function (hand) {
-		var handDom = '',
-			suitColor, suitSymbol, valueText;
-		_.each(hand, function (card) {
-			suitColor = SUIT_VIEWS[card.suit].color;
-			suitSymbol = SUIT_VIEWS[card.suit].symbol;
-			valueText = VALUE_NAMES[card.value] || card.value;
-			handDom += '<li class="card ' + suitColor + '"><span class="cardTop">' + valueText + suitSymbol + '</span>';
-			handDom += '<span class="cardBottom">' + valueText + suitSymbol + '</span></li>';
-		});
-
-		console.info('HAND DOM:', handDom);
-		return handDom;
-	};
-
-	var PlayerView = function (playerModel, templateID) {
-		var $view = $('#' + templateID);
+	var PlayerView = function (playerModel, template, $context) {
+		this.template = template;
 		this.model = playerModel;
 
 		this.update = function () {
-			$view.find('.playerName').html(this.model.name);
-			$view.find('.playerHand').html(generateHandView(this.model.hand));
-			$view.find('.handValue').html(this.model.handValue);
+			var viewModel = _.cloneDeep(this.model);
 
-			if (this.model.state === PLAYER_STATES.BUST) {
-				$view.find('.playerState').html('BUST');
-			}
-			else if (this.model.state === PLAYER_STATES.WON) {
-				$view.find('.playerState').html('Winner!');
-			}
-			else if (this.model.state === PLAYER_STATES.LOST) {
-				$view.find('.playerState').html('You Lost!');
-			}
-			else {
-				$view.find('.playerState').html('');
-			}
+			// Get view data about each card
+			_.each(viewModel.hand, function(card){
+				card.suitColor = SUIT_VIEWS[card.suit].color;
+				card.suitSymbol = SUIT_VIEWS[card.suit].symbol;
+				card.valueText = VALUE_NAMES[card.value] || card.value;
+			});
 
+			viewModel.stateText = PLAYER_STATE_TEXTS[viewModel.state];
+
+			$context.html(Mustache.render(this.template, viewModel));
 		};
+
+		this.update();
 	};
 
 	initTableView();
